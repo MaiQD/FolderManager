@@ -1,0 +1,163 @@
+﻿@model IEnumerable<FolderManage.Models.File>
+
+@{
+    ViewBag.Title = "Home Page";
+}
+<div class="row" style="margin-top:30px">
+    <div class="col-md-11">
+        <a href="#" onclick="showModal()" class="btn btn-dark">Create</a>
+        <a href="#" class="btn btn-dark">Upload</a>
+    </div>
+    <div class="col-md-1"><a href="/Home/Index/@ViewBag.ParentID" class="btn btn-primary">Back</a></div>
+
+</div>
+<div class="row" style="margin-top:30px">
+    @if (Model.Count() > 0)
+    {
+        foreach (var item in Model)
+        {
+            <div class="col-lg-1 text-center myFolder">
+                <a href="/Home/Index/@item.Id" class="btn btn-light">
+
+                    <img class="" width="41" height="32" src="~/Content/images/Folder.jpg" />
+                    @if (item.FolderName.Length > 10)
+                    {
+                        <p style="text-align:center">
+                            @item.FolderName.Substring(0, 10)  ...
+                        </p>
+                    }
+                    else
+                    { <p style="text-align:center">
+                            @item.FolderName
+                        </p>}
+
+
+                </a>
+
+                <div></div>
+
+                <a href="#" class="hoverCom">
+                    <i class="fa fa-info-circle" aria-hidden="true"></i>
+                </a>
+                <a href="#" onclick="GetObjById(@item.Id)" class="hoverCom"><i class="fa fa-pencil-square-o" style="color:green" aria-hidden="true"></i></a>
+                <a href="#" class="hoverCom"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+            </div>
+
+        }
+    }
+    else
+    {
+        <h5 style="color:gray">This folder is empty</h5>
+    }
+
+
+</div>
+
+<div class="modal fade" id="ModalFolder" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediumModalLabel">Folder</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body ">
+
+                <div class="form-group row">
+                    <input type="hidden" name="name" id="hdId" value="" />
+                    <input type="hidden" id="isInsert" />
+                    <label class="control-label col-md-3">Tên folder <span style="color:red">(*)</span></label>
+                    <div class="col-md-9">
+                        <input class="form-control col-md-12" type="text" id="txtFolder" placeholder="Nhập tên folder">
+                        <span style="color:red" id="txtError"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="btnSave" onclick="CreateFolder()" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function showModal() {
+        $('#btnSave').html('Create');
+        $('#hdId').val('');
+        $('#txtError').text('');
+        $('#txtFolder').val('');
+        $("#ModalFolder").modal({ backdrop: "static" })
+    }
+    function GetObjById(id) {
+        $('#txtError').text('');
+        $('#txtFolder').val('');
+
+        let formData = new FormData();
+        formData.append('id', id);
+        $.ajax({
+            url: '@Url.Action("GetObjById","Home")',
+            data: formData,
+            type: 'POST',
+            success: function (data) {
+                if (data != null && data !=="") {
+                    $('#btnSave').html('Update');
+                    $('#txtFolder').val(data.FolderName)
+                    $('#hdId').val(data.Id);
+                    //hiện modal
+                    $("#ModalFolder").modal({ backdrop: "static" })
+                }
+                else {
+                    alert("Có lỗi xảy ra");
+                }
+            },
+            error: function (result, textStatus, errorThrown) {
+                alert("Có lỗi", "Error:" + errorThrown + " - " + textStatus + " - " + result, "error");
+            },
+            cache: false,
+            processData: false,
+            contentType: false
+        });
+
+    }
+    function CreateFolder() {
+        let name = $('#txtFolder').val();
+        if (name === "" || name == undefined) {
+            $('#txtError').text('Tên folder không được để trống');
+            return;
+        }
+        $('txtError').text('');
+        let parentId = @ViewBag.CurrentID ;
+        let url = '';
+        if ($('#hdId').val()>0) {
+            url = '@Url.Action("UpdateFolder", "Home")';
+        }
+        else {
+            url = '@Url.Action("CreateFolder", "Home")'
+        }
+        let formData = new FormData();
+        formData.append('id', $('#hdId').val());
+        formData.append('ParentId', parentId);
+        formData.append('name', name);
+        $.ajax({
+            url: url,
+            data: formData,
+                type: 'POST',
+            success: function (data) {
+                if (data !== "") {
+                     $("#ModalFolder").modal("hide")
+                        window.location.reload();
+                }
+                else {
+                     $('#txtError').text('Có lỗi xảy ra');
+                }
+                },
+                error: function (error) {
+                   $('#txtError').text('Có lỗi xảy ra');
+                },
+                cache: false,
+                processData: false,
+                contentType: false
+            });
+    }
+</script>
