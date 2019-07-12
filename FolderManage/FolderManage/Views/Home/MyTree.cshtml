@@ -1,0 +1,31 @@
+﻿@model IEnumerable<FolderManage.Models.File>
+@using System.Web.UI.WebControls
+@using FolderManage.Models
+
+@{
+    Layout = null;
+}
+
+<div class="form-body">
+    <div id="jstree">
+        <div class="row text-right">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        </div>
+        <div>
+            @(Html.TreeView(Model)
+                              .EmptyContent("Gốc")
+                              .Children(m => m.Files1.Where(p=>p.FileType==1))
+                              .HtmlAttributes(new { id = "tree" , @style="color:white; padding-inline-start:10px"})
+                          .ChildrenHtmlAttributes(new { @class = "subItem" })
+                              .ItemText(m => m.FolderName)
+                              .ItemTemplate(
+                                                            @<text>
+                                                                <a href="/Home/Index/@item.Id" desc="@item.Id">@item.FolderName</a>
+                                                            </text>)
+            )
+        </div>
+    </div>
+</div>
+@section scripts
+{
+}

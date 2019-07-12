@@ -4,55 +4,147 @@
     ViewBag.Title = "Home Page";
 }
 <div class="row" style="margin-top:30px">
-    <div class="col-md-11">
+    <div class="col-md-4">
         <a href="#" onclick="showModal()" class="btn btn-dark">Create</a>
-        <a href="#" class="btn btn-dark">Upload</a>
+        <a href="#" onclick="showModalUpload()" class="btn btn-dark">Upload</a>
+
     </div>
-    <div class="col-md-1"><a href="/Home/Index/@ViewBag.ParentID" class="btn btn-primary">Back</a></div>
+    <div class="col-md-7">
+        <div class="row">
+            @using (Html.BeginForm("Index","Home",FormMethod.Post))
+            {
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> Nhập từ khóa:</span>
+                    </div>
+
+                    <input type="text" name="q" id="q" placeholder="từ khóa tìm kiếm" class="form-control" value="" />
+                    <input type="submit" value="Search" class="btn btn-dark" />
+                </div>
+
+            }
+
+
+        </div>
+    </div>
+    <div class="col-md-1"><a href="/Home/Index/@ViewBag.ParentID" class="btn btn-outline-dark">Back</a></div>
 
 </div>
 <div class="row" style="margin-top:30px">
+    @*nếu có file con*@
     @if (Model.Count() > 0)
     {
         foreach (var item in Model)
         {
             <div class="col-lg-1 text-center myFolder">
-                <a href="/Home/Index/@item.Id" class="btn btn-light">
+                @switch (item.FileType)
+                {
+                    case 1:
+                        <a href="/Home/Index/@item.Id" class="btn btn-light">
 
-                    <img class="" width="41" height="32" src="~/Content/images/Folder.jpg" />
-                    @if (item.FolderName.Length > 10)
-                    {
-                        <p style="text-align:center">
-                            @item.FolderName.Substring(0, 10)  ...
-                        </p>
-                    }
-                    else
-                    { <p style="text-align:center">
-                            @item.FolderName
-                        </p>}
+                            <img class="" width="41" height="32" src="~/Content/images/Folder.jpg" />
+                            @if (item.FolderName.Length > 10)
+                            {
+                                <p style="text-align:center">
+                                    @item.FolderName.Substring(0, 10)  ...
+                                </p>
+                            }
+                            else
+                            { <p style="text-align:center">
+                                    @item.FolderName
+                                </p>}
 
 
-                </a>
+                        </a>
+                        <div></div>
 
-                <div></div>
+                        <a href="#" class="hoverCom">
+                            <i class="fa fa-info-circle" aria-hidden="true"></i>
+                        </a>
+                        <a href="#" onclick="GetObjById(@item.Id)" class="hoverCom"><i class="fa fa-pencil-square-o" style="color:green" aria-hidden="true"></i></a>
+                        <a href="#" class="hoverCom" onclick="Delete(@item.Id)"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+                        break;
+                    case 14:
+                        <span class="btn btn-light">
+                            <img width="41" height="32" src="~/Content/media/@item.FolderName" />
+                            @if (item.FolderName.Length > 10)
+                            {
+                                <span style="text-align:center">
+                                    @item.FolderName.Substring(0, 10)  ...
+                                </span>
+                            }
+                            else
+                            { <span style="text-align:center">
+                                    @item.FolderName
+                                </span>}
+                        </span>
+                        <a href="#" onclick="Delete(@item.Id)" class="hoverCom"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+                        break;
+                    case 12:
+                        <span class="btn btn-light">
+                            <img width="41" height="32" src="~/Content/images/movie_play_black.png" />
+                            @if (item.FolderName.Length > 10)
+                            {
+                                <span style="text-align:center">
+                                    @item.FolderName.Substring(0, 10)  ...
+                                </span>
+                            }
+                            else
+                            { <span style="text-align:center">
+                                    @item.FolderName
+                                </span>}
+                        </span>
+                        <a href="#" onclick="Delete(@item.Id)" class="hoverCom"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+                        break;
+                    case 11:
+                        <span class="btn btn-light">
+                            <img width="41" height="32" src="~/Content/images/mp3-512.png" />
+                            @if (item.FolderName.Length > 10)
+                            {
+                                <span style="text-align:center">
+                                    @item.FolderName.Substring(0, 10)  ...
+                                </span>
+                            }
+                            else
+                            { <span style="text-align:center">
+                                    @item.FolderName
+                                </span>}
+                        </span>
+                        <a href="#" onclick="Delete(@item.Id)" class="hoverCom"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+                        break;
+                    default:
+                        <span class="btn btn-light">
+                            <img width="41" height="32" src="~/Content/images/blank-file.png" />
+                            @if (item.FolderName.Length > 10)
+                            {
+                                <span style="text-align:center">
+                                    @item.FolderName.Substring(0, 10)  ...
+                                </span>
+                            }
+                            else
+                            { <span style="text-align:center">
+                                    @item.FolderName
+                                </span>}
+                        </span>
+                        <a href="#" onclick="Delete(@item.Id)" class="hoverCom"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+                        break;
+                }
 
-                <a href="#" class="hoverCom">
-                    <i class="fa fa-info-circle" aria-hidden="true"></i>
-                </a>
-                <a href="#" onclick="GetObjById(@item.Id)" class="hoverCom"><i class="fa fa-pencil-square-o" style="color:green" aria-hidden="true"></i></a>
-                <a href="#" class="hoverCom"><i class="fa fa-trash-o" style="color:red" aria-hidden="true"></i></a>
+
+
+
             </div>
 
         }
     }
-    else
+    else /*nếu không có gì bên trong*/
     {
         <h5 style="color:gray">This folder is empty</h5>
     }
 
 
 </div>
-
+@*modal thêm mới thư mục*@
 <div class="modal fade" id="ModalFolder" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
     <div class="modal-dialog " role="document">
         <div class="modal-content">
@@ -81,6 +173,48 @@
         </div>
     </div>
 </div>
+@*kết thúc modal thêm mới thư mục*@
+
+@*modal upload file*@
+<div class="modal fade" id="ModalUpload" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mediumModalLabel">Upload File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body ">
+
+
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupFileAddon01">Chọn file <span style="color:red">(*)</span></span>
+                    </div>
+                    <div class="custom-file">
+
+
+                        <input type="file" class="form-control-file col-12" id="fUpload" name="fUpload"
+                               aria-describedby="fUpload">
+
+                    </div>
+
+                </div>
+                <div class="float-right col-9">
+                    <span style="color:red" id="txtErrorUpload"></span>
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="btnFUpload" class="btn btn-primary">Create</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+@*kết thúc modal upload file*@
 <script>
     function showModal() {
         $('#btnSave').html('Create');
@@ -121,7 +255,7 @@
 
     }
     function CreateFolder() {
-        let name = $('#txtFolder').val();
+        let name = $('#txtFolder').val().trim();
         if (name === "" || name == undefined) {
             $('#txtError').text('Tên folder không được để trống');
             return;
@@ -159,5 +293,79 @@
                 processData: false,
                 contentType: false
             });
+        }
+    function Delete(id) {
+        let formData = new FormData();
+        if (!confirm("Bạn có chắc muốn xóa? Hành động này sẽ xóa hết tất cả thành phần bên trong.")) {
+            return;
+        }
+
+        formData.append('id', id);
+      
+        $.ajax({
+            url: "/Home/Delete",
+            data: formData,
+                type: 'POST',
+            success: function (data) {
+                if (data !== "") {
+                     
+                        window.location.reload();
+                }
+                else {
+                    alert('Có lỗi xảy ra');
+                }
+                },
+                error: function (error) {
+                   alert('Có lỗi xảy ra');
+                },
+                cache: false,
+                processData: false,
+                contentType: false
+            });
     }
+
+    function showModalUpload() {
+        $('#fUpload').val('');
+        $('#txtErrorUpload').text('');
+        $("#ModalUpload").modal({ backdrop: "static" })
+        }
+
+    $(document).ready(function () {
+
+        $('#btnFUpload').click(function () {
+            if ($("#fUpload").get(0).files.length ===0) {
+                $('#txtErrorUpload').text('Bạn phải chọn file');
+                return;
+            }
+            let parentId = @ViewBag.CurrentID ;
+            var fileUpload = $("#fUpload").get(0);
+            var file = fileUpload.files;
+            var formData = new FormData();
+            formData.append('file', file[0]);
+            formData.append('ParentId', parentId);
+            $.ajax({
+                type: "POST",
+                contentType: false,//"application/json; charset=utf-8",
+                processData:false,
+                url: "/Home/PushFile",
+                data: formData,
+                dataType: "json",
+                async: "false",
+                success: function (data) {
+
+                    if (data != null && data!='') {
+
+                        window.location.reload();
+
+                    } // iff
+                    else
+                        alert('Có lỗi xảy ra trong quá trình thực hiện');
+                },
+                error: function (result, textStatus, errorThrown) {
+                    alert("Error:" + errorThrown + " - " + textStatus + " - " + result);
+                }
+            });
+        });
+
+    })
 </script>

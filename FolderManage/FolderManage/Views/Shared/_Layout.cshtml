@@ -7,18 +7,15 @@
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/modernizr")
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <style>
-        .hoverCom{
-            visibility: hidden;
-        }
-        .myFolder:hover .hoverCom{
-            visibility:visible;
-        }
-    </style>
+    @Scripts.Render("~/bundles/jquery")
 </head>
 <body>
     <nav class="navbar navbar-expand-sm navbar-dark fixed-top bg-dark">
+        <span style="        font-size: 30px;
+        cursor: pointer;
+        color: white" onclick="openNav()">&#9776;</span>
         <div class="container">
+
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
             @Html.ActionLink("Folder Manager", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
             <div class="navbar-collapse collapse" id="navbarSupportedContent">
@@ -28,17 +25,19 @@
                     <li class="nav-item"><a href="/Home/Contact" class="nav-link">Contact</a></li>
                 </ul>
 
-                
+
 
             </div>
         </div>
     </nav>
 
     <div class="row">
-        <div>
+        <div id="mySidenav" class="sidenav">
 
+            @Html.Action("MyTree", "Home")
         </div>
-        <div class="container body-content">
+
+        <div id="main" class=" container body-content">
             @RenderBody()
             <hr />
             <footer>
@@ -47,8 +46,23 @@
         </div>
     </div>
 
-    @Scripts.Render("~/bundles/jquery")
+  
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)
+    <script>
+        function openNav() {
+            if (document.getElementById("mySidenav").style.width == "300px") {
+                document.getElementById("mySidenav").style.width = "0";
+            }
+            else {
+                document.getElementById("mySidenav").style.width = "300px";
+            }
+
+        }
+
+        function closeNav() {
+            document.getElementById("mySidenav").style.width = "0";
+        }
+    </script>
 </body>
 </html>
